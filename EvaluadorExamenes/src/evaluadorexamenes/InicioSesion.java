@@ -5,6 +5,7 @@
  */
 package evaluadorexamenes;
 
+import Cliente.Inicio;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -93,6 +94,6 @@ public class InicioSesion extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("Si");
+        framePrincipal.mostrarPanel(new Inicio(framePrincipal));
     }
 }
