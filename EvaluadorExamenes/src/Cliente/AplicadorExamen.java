@@ -169,10 +169,11 @@ public class AplicadorExamen extends JPanel implements ActionListener {
     }
     
     public void terminarExamen(String mensaje){
+        
         //llamada a base de datos para guardar respuestas
-        tiempo.stop();
         JOptionPane.showMessageDialog(null, mensaje, "Examen concluido", JOptionPane.INFORMATION_MESSAGE);
-        framePrincipal.mostrarPanel(new Inicio(framePrincipal));
+        framePrincipal.mostrarPanel(new Resultados(framePrincipal, examen));
+        tiempo.stop();
     }
 
     class Temporalizador implements Runnable {
@@ -192,8 +193,7 @@ public class AplicadorExamen extends JPanel implements ActionListener {
                         if (minutos == 0) {
                             System.out.println("acabo");
                             terminarExamen("Se agoto el tiempo para responder el examen");
-                            tiempo.stop();
-                            
+                            //tiempo.stop();
                         } else {
                             segundos = 60;
                         }

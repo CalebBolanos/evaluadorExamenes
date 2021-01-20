@@ -8,7 +8,11 @@ package Cliente;
 import Gui.BotonExamen;
 import Gui.ComunicacionExamen;
 import Modelo.Examen;
+import static Modelo.Examen.CONCLUIDO;
+import static Modelo.Examen.EN_PROCESO;
+import static Modelo.Examen.NO_EMPEZADO;
 import evaluadorexamenes.FramePrincipal;
+import evaluadorexamenes.InicioSesion;
 import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.ScrollPane;
@@ -94,12 +98,29 @@ public class Inicio extends JPanel implements ActionListener, ComunicacionExamen
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+        if(e.getSource() == buttonCerrarSesion){
+            framePrincipal.mostrarPanel(new InicioSesion(framePrincipal));
+        }
+        if(e.getSource() == buttonCuenta){
+            framePrincipal.mostrarPanel(new ConfiguracionCuenta(framePrincipal));
+        }
     }
     
     @Override
     public void AccionExamen(Examen examen){
-        framePrincipal.mostrarPanel(new AplicadorExamen(framePrincipal, examen));
+        switch (examen.getEstado()){
+            case NO_EMPEZADO:
+                framePrincipal.mostrarPanel(new AplicadorExamen(framePrincipal, examen));
+                break;
+            case EN_PROCESO:
+                framePrincipal.mostrarPanel(new AplicadorExamen(framePrincipal, examen));
+                break;
+            case CONCLUIDO:
+                framePrincipal.mostrarPanel(new Resultados(framePrincipal, examen));
+                break;
+            
+        }
+        
     }
     
     public void obtenerExamenes(){

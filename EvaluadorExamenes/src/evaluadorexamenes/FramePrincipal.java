@@ -34,7 +34,7 @@ public class FramePrincipal extends JFrame{
     }
 
     private void crearGUI() {
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         panelPrincipal = new JPanel(new BorderLayout());
