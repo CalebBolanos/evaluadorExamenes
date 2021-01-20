@@ -18,10 +18,10 @@ public class Examen {
     
     private String titulo, nombrePresentaExamen;
     private Date fecha;
-    private int ultimaPregunta, calificación;
-    private int estado;
+    private int idExamen, ultimaPregunta, calificación, estado;
 
-    public Examen(String titulo, String nombrePresentaExamen, Date fecha, int ultimaPregunta, int calificación) {
+    public Examen(int idExamen, String titulo, String nombrePresentaExamen, Date fecha, int ultimaPregunta, int calificación) {
+        this.idExamen = idExamen;
         this.titulo = titulo;
         this.nombrePresentaExamen = nombrePresentaExamen;
         this.fecha = fecha;
@@ -30,6 +30,14 @@ public class Examen {
         setEstado();
     }
 
+    public int getIdExamen() {
+        return idExamen;
+    }
+
+    public void setIdExamen(int idExamen) {
+        this.idExamen = idExamen;
+    }
+    
     public String getTitulo() {
         return titulo;
     }

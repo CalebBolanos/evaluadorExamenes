@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 /**
  * Parte de la gui en donde se muestra la información de un examen en 
  * especifico
+ * Dependiendo del estado en el que se encuentre el examen se mostrara 
+ * la información
  */
 public class BotonExamen extends JPanel implements ActionListener{
     private Examen examen;
