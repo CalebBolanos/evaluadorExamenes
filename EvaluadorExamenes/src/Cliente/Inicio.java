@@ -11,6 +11,7 @@ import Modelo.Examen;
 import static Modelo.Examen.CONCLUIDO;
 import static Modelo.Examen.EN_PROCESO;
 import static Modelo.Examen.NO_EMPEZADO;
+import Sesion.Usuario;
 import evaluadorexamenes.FramePrincipal;
 import evaluadorexamenes.InicioSesion;
 import java.awt.Button;
@@ -99,6 +100,7 @@ public class Inicio extends JPanel implements ActionListener, ComunicacionExamen
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == buttonCerrarSesion){
+            Usuario.limpiarDatos();
             framePrincipal.mostrarPanel(new InicioSesion(framePrincipal));
         }
         if(e.getSource() == buttonCuenta){

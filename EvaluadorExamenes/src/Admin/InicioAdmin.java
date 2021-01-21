@@ -2,6 +2,7 @@ package Admin;
 
 
 import Gui.CreadorExamen;
+import Sesion.Usuario;
 import evaluadorexamenes.FramePrincipal;
 import evaluadorexamenes.InicioSesion;
 import java.awt.Button;
@@ -83,6 +84,7 @@ public class InicioAdmin extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == buttonCerrarSesion){
+            Usuario.limpiarDatos();
             framePrincipal.mostrarPanel(new InicioSesion(framePrincipal));
         }
         if(e.getSource() == buttonCuenta){
