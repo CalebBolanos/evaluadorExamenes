@@ -4,6 +4,8 @@ package Admin;
  *
  * @author Lalo
  */
+import Gui.AgregarAdmin;
+import Gui.AgregarClient;
 import evaluadorexamenes.FramePrincipal;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -28,7 +30,7 @@ public class ConfiguracionCuentaAdmin extends JPanel implements ActionListener{
     JPanel panelSuperior, panelContenido;
     JScrollPane scrollPane;
     JLabel lblTitulo, lblUsuario, lblCorreo;
-    JButton buttonInicio, buttonAcercaDe;
+    JButton buttonInicio, buttonAcercaDe,nvoAdmin,nvoClient;
     
     public ConfiguracionCuentaAdmin(FramePrincipal framePrincipal){
         super();
@@ -44,8 +46,16 @@ public class ConfiguracionCuentaAdmin extends JPanel implements ActionListener{
         buttonInicio.addActionListener(this);
         panelSuperior.add(buttonInicio);
         
+        nvoAdmin = new JButton("Agregar Admin");
+        nvoAdmin.addActionListener(this);
+        panelSuperior.add(nvoAdmin);
+        
         lblTitulo = new JLabel("Configuración de la cuenta");
         panelSuperior.add(lblTitulo);
+        
+        nvoClient = new JButton("Agregar Estudiante");
+        nvoClient.addActionListener(this);
+        panelSuperior.add(nvoClient);
         
         buttonAcercaDe = new JButton("Acerca de");
         buttonAcercaDe.addActionListener(this);
@@ -72,6 +82,15 @@ public class ConfiguracionCuentaAdmin extends JPanel implements ActionListener{
         if(e.getSource() == buttonInicio){
             framePrincipal.mostrarPanel(new InicioAdmin(framePrincipal));
         }
+        
+        if(e.getSource() == nvoAdmin){
+            framePrincipal.mostrarPanel(new AgregarAdmin(framePrincipal));
+        }
+        
+        if(e.getSource() == nvoClient){
+            framePrincipal.mostrarPanel(new AgregarClient(framePrincipal));
+        }
+        
         if(e.getSource() == buttonAcercaDe){
             JOptionPane.showMessageDialog(null, "Aplicador y evaluador de examenes de opción multiple\nProyecto de Programación Orientada a Objetos", "Acerca de", JOptionPane.INFORMATION_MESSAGE);
         }

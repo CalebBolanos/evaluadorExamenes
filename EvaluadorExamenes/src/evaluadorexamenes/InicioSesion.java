@@ -5,6 +5,7 @@
  */
 package evaluadorexamenes;
 
+import Admin.InicioAdmin;
 import Cliente.Inicio;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -29,7 +30,7 @@ public class InicioSesion extends JPanel implements ActionListener{
     private JLabel labelIniciarSesion, labelUsuario, labelContrasena;
     private JTextField txtUsuario;
     private JPasswordField pswContrasena;
-    private JButton buttonIniciarSesion;
+    private JButton buttonIniciarSesion,buttonIniciarSesion2;
     
     public InicioSesion(FramePrincipal framePrincipal){
         super();
@@ -90,10 +91,21 @@ public class InicioSesion extends JPanel implements ActionListener{
         dimensiones.gridy = 4;
         dimensiones.gridwidth = 4;
         add(buttonIniciarSesion, dimensiones);
+        
+        buttonIniciarSesion2 = new JButton("Iniciar Sesion 2");
+        buttonIniciarSesion2.addActionListener(this);
+        dimensiones.gridx = 0;
+        dimensiones.gridy = 10;
+        dimensiones.gridwidth = 4;
+        add(buttonIniciarSesion2, dimensiones);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        framePrincipal.mostrarPanel(new Inicio(framePrincipal));
+      if(e.getSource()==buttonIniciarSesion)
+        {framePrincipal.mostrarPanel(new Inicio(framePrincipal));}
+        else{
+         framePrincipal.mostrarPanel(new InicioAdmin(framePrincipal));    
+        }
     }
 }
