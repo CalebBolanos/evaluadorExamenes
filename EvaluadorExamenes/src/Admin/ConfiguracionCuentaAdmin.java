@@ -6,6 +6,7 @@ package Admin;
  */
 import Gui.AgregarAdmin;
 import Gui.AgregarClient;
+import Sesion.Usuario;
 import evaluadorexamenes.FramePrincipal;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -64,10 +65,10 @@ public class ConfiguracionCuentaAdmin extends JPanel implements ActionListener{
         panelContenido = new JPanel();
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
         
-        lblUsuario = new JLabel("Nombre");
+        lblUsuario = new JLabel("Nombre"+Usuario.getNombre());
         panelContenido.add(lblUsuario);
         
-        lblCorreo = new JLabel("Correo electrónico");
+        lblCorreo = new JLabel("Correo electrónico"+Usuario.getCorreo());
         panelContenido.add(lblCorreo);
         
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
