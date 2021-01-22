@@ -128,6 +128,11 @@ public class Inicio extends JPanel implements ActionListener, ComunicacionExamen
     public void obtenerExamenes(){
         examenes = new ArrayList<>();
         Examen examenx;
+        
+        
+        
+        
+        
         for (int i = 0; i < 15; i++) {
             examenx = new Examen(i, "Examen"+ i, "presentaexamen", new Date(2020, 1, 15), i, 0);
             examenes.add(new BotonExamen(examenx, this));

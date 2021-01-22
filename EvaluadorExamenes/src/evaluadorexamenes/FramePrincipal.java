@@ -8,23 +8,17 @@ package evaluadorexamenes;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-
 /**
  *
- * @author calebbolanos
+ * Clase principal en donde se mostraran los JPanels que contienen la GUI
  */
 public class FramePrincipal extends JFrame{
 
-    /**
-     * Clase principal en donde se mostraran los JPanels que contienen la GUI
-     */
-    
     private JPanel panelPrincipal;
 
     public FramePrincipal(String titulo) {
         super(titulo);
-        crearGUI();
+        configurarFrame();
     }
     
     public static void main(String[] args) {
@@ -33,7 +27,7 @@ public class FramePrincipal extends JFrame{
         ventana.setVisible(true);
     }
 
-    private void crearGUI() {
+    private void configurarFrame() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -44,6 +38,11 @@ public class FramePrincipal extends JFrame{
         pack();
     }
 
+    /**
+     * metodo encargado de cargar un panel dentro del Jframe 
+     * este metodo será usado a lo largo del programa cuando se 
+     * esté navegando por el
+     */
     public void mostrarPanel(JPanel panel) {
         panelPrincipal.removeAll();
         panelPrincipal.add(panel, BorderLayout.CENTER);

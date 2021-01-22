@@ -5,15 +5,10 @@
  */
 package Cliente;
 
-import Gui.BotonExamen;
-import Modelo.Examen;
+import Sesion.Usuario;
 import evaluadorexamenes.FramePrincipal;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -39,6 +34,11 @@ public class ConfiguracionCuenta extends JPanel implements ActionListener{
         crearGUI();
     }
     
+    
+    /**
+     * ademas de generar la GUI mostramos los datos del cliente como lo 
+     * es su nombre y correo electronico
+     */
     private void crearGUI() {
         panelSuperior = new JPanel();
         panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.X_AXIS));
@@ -57,10 +57,10 @@ public class ConfiguracionCuenta extends JPanel implements ActionListener{
         panelContenido = new JPanel();
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
         
-        lblUsuario = new JLabel("Nombre");
+        lblUsuario = new JLabel("Nombre: "+ Usuario.getNombre());
         panelContenido.add(lblUsuario);
         
-        lblCorreo = new JLabel("Correo electrónico");
+        lblCorreo = new JLabel("Correo electrónico: "+ Usuario.getCorreo());
         panelContenido.add(lblCorreo);
         
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

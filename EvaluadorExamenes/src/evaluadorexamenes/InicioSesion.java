@@ -19,10 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,7 +29,8 @@ import javax.swing.SwingConstants;
 
 /**
  *
- * @author calebbolanos
+ * Clase en donde se muestra la gui para que tanto clientes como 
+ * administradores inicien sesion. 
  */
 public class InicioSesion extends JPanel implements ActionListener {
 
@@ -46,12 +43,25 @@ public class InicioSesion extends JPanel implements ActionListener {
 
     private Conexion base;
 
+    
+    /**
+     * Constructor de la clase, el cual tiene como parametro 
+     * framePrincipal el cual es un JFrame en donde se pondra la nueva gui 
+     * generada por esta clase
+     */
     public InicioSesion(FramePrincipal framePrincipal) {
         super();
         this.framePrincipal = framePrincipal;
         crearGUI();
     }
 
+    
+    /**
+     * metodo encargado de inicializar los componentes de java swing que forman 
+     * parte de la GUI. cabe mencionar que tambien se inicializan algunas 
+     * variables de instancia como base, objeto utilizado para hacer la 
+     * conexion a la base de datos
+     */
     private void crearGUI() {
         setLayout(new GridBagLayout());
 
@@ -108,7 +118,13 @@ public class InicioSesion extends JPanel implements ActionListener {
         add(buttonIniciarSesion, dimensiones);
 
     }
-
+    
+    /**
+     * dentro de este metodo implementado se verifica si se ha presionado 
+     * buttonIniciarSesion para hacer una consulta a la base de datos para 
+     * iniciar sesion y obtener la informacion del usuario. Dependiendo del tipo 
+     * de usuario se redigira a Inicio(Clientes) o a InicioAdmin(Administrador)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonIniciarSesion) {
@@ -151,7 +167,4 @@ public class InicioSesion extends JPanel implements ActionListener {
         }
     }
 
-    public void inicioSesion() {
-
-    }
 }
