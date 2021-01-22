@@ -2,16 +2,20 @@ package Gui;
 
 import Admin.ConfiguracionCuentaAdmin;
 import Admin.InicioAdmin;
+import Base.Conexion;
+import Base.Validaciones;
 import evaluadorexamenes.FramePrincipal;
 import evaluadorexamenes.InicioSesion;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -22,8 +26,10 @@ import javax.swing.JTextField;
 public class AgregarClient extends JPanel implements ActionListener{
      FramePrincipal framePrincipal;
      JPanel panelSuperior, panelContenido,panelbtn;
-     JButton buttonInicio, buttonSalir,buttonAtras,crear,vaciar,verificar;
-     JTextField idclien,Nomb,ApPater,ApMater,mail,contras;
+     JButton buttonInicio, buttonSalir,buttonAtras,Agr,vaciar,verificar;
+     JTextField Nomb,ApPater,ApMater,mail,contras;
+     
+     private Conexion base;
      
      public AgregarClient(FramePrincipal framePrincipal){
         super();
@@ -32,6 +38,8 @@ public class AgregarClient extends JPanel implements ActionListener{
     }
      
      public void crearGUI(){
+         
+       base = new Conexion();
        
        //Panel Encabezado
        panelSuperior = new JPanel();
@@ -57,8 +65,6 @@ public class AgregarClient extends JPanel implements ActionListener{
         panelContenido = new JPanel();
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
         
-        JLabel id=new JLabel("id");
-        panelContenido.add(id);
         
         JLabel nom=new JLabel("Nombre");
         panelContenido.add(nom);
@@ -77,9 +83,6 @@ public class AgregarClient extends JPanel implements ActionListener{
         
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
          
-        idclien=new JTextField();
-        idclien.setSize(10,50);
-        panelContenido.add(idclien);
         
         Nomb=new JTextField();
         Nomb.setSize(10,50);
@@ -109,9 +112,9 @@ public class AgregarClient extends JPanel implements ActionListener{
         panelbtn.setLayout(new BoxLayout(panelbtn, BoxLayout.X_AXIS));
         
         //Inserta los datos en la tabla Examen
-        crear=new JButton("Crear");
-        crear.addActionListener(this);
-        panelbtn.add(crear);
+        Agr=new JButton("Agregar");
+        Agr.addActionListener(this);
+        panelbtn.add(Agr);
         
         //Hace la consulta de lo que agrego
         verificar=new JButton("Verificar");
@@ -132,7 +135,6 @@ public class AgregarClient extends JPanel implements ActionListener{
      }
      
      public void VaciarTextField(){
-        idclien.setText("");
         Nomb.setText("");
         ApPater.setText("");
         ApMater.setText("");
@@ -154,8 +156,55 @@ public class AgregarClient extends JPanel implements ActionListener{
          framePrincipal.mostrarPanel(new InicioSesion(framePrincipal)); 
        }
        
-       if(e.getSource()==crear){
+       if(e.getSource()==Agr){
+          String n,p,m,cr,cn,c;
+           n=Nomb.getText();
+           p=ApPater.getText();
+           m=ApMater.getText();
+           cr=mail.getText();
+           cn=contras.getText();
+           c="c";
+           if(Validaciones.StringsNoVacios(n,p,m,cr,cn)){
+               try {
+                   base.conectar();
+                   ResultSet rs = base.ejecutaQuery("call spRegistrarCliente(\"" + n + "\", \"" + p + "\", \"" + m + "\", \"" + cr + "\", \"" + cn + "\",\""+c+"\");");
+                   if (rs.next()) {
+                        if (rs.getString("msj3").equals("Se agrego nuevo usuario")) {
+                            JOptionPane.showMessageDialog(null, "Cuenta creada exitosamente");
+                        } else {
+                            JOptionPane.showMessageDialog(null, rs.getString("msj4"));
+                        }
+                    }
+                   base.cierraConexion();
+               } catch (SQLException ex) {
+                   Logger.getLogger(AgregarAdmin.class.getName()).log(Level.SEVERE, null, ex);
+               }
+           }else {
+                JOptionPane.showMessageDialog(null, "Llena todos los campos vacios", "Agregar Estudiante", JOptionPane.INFORMATION_MESSAGE);
+            }
           
+       }
+       
+       if(e.getSource()==verificar){
+           int  id;
+           String n,p,m,cr,cn;
+           try {
+               base.conectar();
+               ResultSet rs=base.ejecutaQuery("Select*from Cliente");
+               System.out.println("id Nombre Apellido Paterno Apellido Materno Correo Contrasena");
+               while(rs.next()){
+                  id = rs.getInt("idCliente");
+                  n = rs.getString("nombre");
+                  p = rs.getString("paterno");
+                  m = rs.getString("materno");
+                  cr = rs.getString("correo");
+                  cn = rs.getString("contrasena");
+                System.out.println(id+" "+n+" "+p+" "+m+""+cr+""+cn);  
+               }
+               base.cierraConexion();
+           } catch (SQLException ex) {
+               Logger.getLogger(AgregarAdmin.class.getName()).log(Level.SEVERE, null, ex);
+           }
        }
        
        if(e.getSource()==vaciar){

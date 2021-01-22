@@ -50,7 +50,7 @@ public class ConfiguracionCuentaAdmin extends JPanel implements ActionListener{
         nvoAdmin.addActionListener(this);
         panelSuperior.add(nvoAdmin);
         
-        lblTitulo = new JLabel("Configuración de la cuenta");
+        lblTitulo = new JLabel("Configuración");
         panelSuperior.add(lblTitulo);
         
         nvoClient = new JButton("Agregar Estudiante");
