@@ -28,7 +28,7 @@ public class InicioAdmin extends JPanel implements ActionListener {
   JPanel panelSuperior, panelContenido;
   JScrollPane scrollPane;
   JLabel lblInicio;
-  JButton buttonCuenta, buttonCerrarSesion,nvoExamen;
+  JButton buttonCuenta, buttonCerrarSesion,nvoExamen, buttonReactivo;
   
   
   public InicioAdmin(FramePrincipal framePrincipal){
@@ -57,13 +57,17 @@ public class InicioAdmin extends JPanel implements ActionListener {
         buttonCuenta = new JButton("Configuración de la cuenta");
         buttonCuenta.addActionListener(this);
         
-        nvoExamen=new JButton("Crear Nuevo");
+        nvoExamen=new JButton("Crear Nuevo Examen");
         nvoExamen.addActionListener(this);
+        
+        buttonReactivo=new JButton("Añadir reactivo");
+        buttonReactivo.addActionListener(this);
         
         panelSuperior.add(buttonCerrarSesion);
         panelSuperior.add(lblInicio);
         panelSuperior.add(buttonCuenta);
         panelSuperior.add(nvoExamen);
+        panelSuperior.add(buttonReactivo);
         
         /**
          * Panel con el contenido del inicio, se mostraran todos los examenes 
@@ -93,6 +97,10 @@ public class InicioAdmin extends JPanel implements ActionListener {
         
         if(e.getSource()==nvoExamen){
          framePrincipal.mostrarPanel(new CreadorExamen(framePrincipal));
+        }
+        
+        if(e.getSource()==buttonReactivo){
+         framePrincipal.mostrarPanel(new AgregarReactivo(framePrincipal));
         }
     }
     
