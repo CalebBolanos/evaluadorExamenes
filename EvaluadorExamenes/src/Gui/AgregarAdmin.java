@@ -26,7 +26,7 @@ import javax.swing.JTextField;
 public class AgregarAdmin extends JPanel implements ActionListener{
      FramePrincipal framePrincipal;
      JPanel panelSuperior, panelContenido,panelbtn;
-     JButton buttonInicio, buttonSalir,buttonAtras,Agr,vaciar,verificar;
+     JButton buttonInicio, buttonSalir,buttonAtras,Agr,vaciar;
      JTextField Nomb,ApPater,ApMater,mail,contras;
      
      private Conexion base;
@@ -113,11 +113,6 @@ public class AgregarAdmin extends JPanel implements ActionListener{
         Agr.addActionListener(this);
         panelbtn.add(Agr);
         
-        //Hace la consulta de lo que agrego
-        verificar=new JButton("Verificar");
-        verificar.addActionListener(this);
-        panelbtn.add(verificar);
-        
         //Vacia los campos para que el usuario pueda escribir
         vaciar=new JButton("Vaciar");
         vaciar.addActionListener(this);
@@ -181,27 +176,6 @@ public class AgregarAdmin extends JPanel implements ActionListener{
             }
        }
        
-       if(e.getSource()==verificar){
-           int  id;
-           String n,p,m,cr,cn;
-           try {
-               base.conectar();
-               ResultSet rs=base.ejecutaQuery("Select*from Admon");
-               System.out.println("id Nombre Apellido Paterno Apellido Materno Correo Contrasena");
-               while(rs.next()){
-                  id = rs.getInt("idAdmin");
-                  n = rs.getString("nombre");
-                  p = rs.getString("paterno");
-                  m = rs.getString("materno");
-                  cr = rs.getString("correo");
-                  cn = rs.getString("contrasena");
-                System.out.println(id+" "+n+" "+p+" "+m+""+cr+""+cn);  
-               }
-               base.cierraConexion();
-           } catch (SQLException ex) {
-               Logger.getLogger(AgregarAdmin.class.getName()).log(Level.SEVERE, null, ex);
-           }
-       }
        
        if(e.getSource()==vaciar){
            VaciarTextField();

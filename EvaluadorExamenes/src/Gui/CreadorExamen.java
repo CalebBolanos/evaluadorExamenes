@@ -1,16 +1,21 @@
 package Gui;
 
 import Admin.InicioAdmin;
+import Base.Conexion;
+import Base.Validaciones;
 import evaluadorexamenes.FramePrincipal;
 import evaluadorexamenes.InicioSesion;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -22,8 +27,10 @@ public class CreadorExamen extends JPanel implements ActionListener{
      FramePrincipal framePrincipal;
      JPanel panelSuperior, panelContenido,panelbtn;
      JButton buttonInicio, buttonSalir,crear,vaciar,verificar;
-     JTextField idEx,TypEx,FechEx,LpEx,TmpoEx;
+     JTextField FechEx,Tmpo,TypExa;
      
+      private Conexion base;
+      
      public CreadorExamen(FramePrincipal framePrincipal){
         super();
         this.framePrincipal = framePrincipal;
@@ -31,7 +38,8 @@ public class CreadorExamen extends JPanel implements ActionListener{
     }
      
      public void crearGUI(){
-       
+         
+        base = new Conexion();
        //Panel Encabezado
        panelSuperior = new JPanel();
        panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.X_AXIS));
@@ -51,43 +59,31 @@ public class CreadorExamen extends JPanel implements ActionListener{
         
         panelContenido = new JPanel();
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
-        
-        JLabel id=new JLabel("id");
-        panelContenido.add(id);
-        
-        JLabel Tex=new JLabel("Tipo de Examen");
-        panelContenido.add(Tex);
+       
         
         JLabel Fch=new JLabel("Fecha");
         panelContenido.add(Fch);
         
-        JLabel Lpr=new JLabel("Ultima Pregunta");
+        JLabel Lpr=new JLabel("Tiempo");
         panelContenido.add(Lpr);
         
-        JLabel Ti=new JLabel("Tiempo");
+        JLabel Ti=new JLabel("Nombre");
         panelContenido.add(Ti);
         
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-         
-        idEx=new JTextField();
-        idEx.setSize(10,50);
-        panelContenido.add(idEx);
-        
-        TypEx=new JTextField();
-        TypEx.setSize(10,50);
-        panelContenido.add(TypEx);
+       
         
         FechEx=new JTextField();
         FechEx.setSize(10,50);
         panelContenido.add(FechEx);
         
-        LpEx=new JTextField();
-        LpEx.setSize(10,50);
-        panelContenido.add(LpEx);
+        Tmpo=new JTextField();
+        Tmpo.setSize(10,50);
+        panelContenido.add(Tmpo);
         
-        TmpoEx=new JTextField();
-        TmpoEx.setSize(10,50);
-        panelContenido.add(TmpoEx);
+        TypExa=new JTextField();
+        TypExa.setSize(10,50);
+        panelContenido.add(TypExa);
          setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
        
         
@@ -100,11 +96,6 @@ public class CreadorExamen extends JPanel implements ActionListener{
         crear=new JButton("Crear");
         crear.addActionListener(this);
         panelbtn.add(crear);
-        
-        //Hace la consulta de lo que agrego
-        verificar=new JButton("Verificar");
-        verificar.addActionListener(this);
-        panelbtn.add(verificar);
         
         //Vacia los campos para que el usuario pueda escribir
         vaciar=new JButton("Vaciar");
@@ -120,11 +111,9 @@ public class CreadorExamen extends JPanel implements ActionListener{
      }
      
      public void VaciarTextField(){
-        idEx.setText("");
-        TypEx.setText("");
         FechEx.setText("");
-        LpEx.setText("");
-        TmpoEx.setText(""); 
+        Tmpo.setText("");
+        TypExa.setText(""); 
      }
     
     @Override
@@ -139,12 +128,36 @@ public class CreadorExamen extends JPanel implements ActionListener{
        
        if(e.getSource()==crear){
           
-       }
-       
-       if(e.getSource()==vaciar){
-           VaciarTextField();
-       }    
+           int id;
+           String  f,tm,te;
+           f=FechEx.getText();
+           tm=Tmpo.getText();
+           te=TypExa.getText();
+           
+            if(Validaciones.StringsNoVacios(f,tm,te)){
+               try {
+                   base.conectar();
+                   ResultSet rs = base.ejecutaQuery("call CreaExam(\"" + f + "\", \"" + tm + "\");");
+                   if(rs.next()){
+                    id=rs.getInt("idExamen");
+                    ResultSet rs2=base.ejecutaQuery("call RandRe(\"" + id + "\", \"" + te+ "\");");
+                     if(rs2.next()){
+                        if (rs2.getString("msj").equals("ok")) {
+                            JOptionPane.showMessageDialog(null, "Examen Agregado Corrrectamente");
+                        } else {
+                            JOptionPane.showMessageDialog(null, rs.getString("msj1"));
+                        }   
+                   }
+                  } 
+                   base.cierraConexion();
+               } catch (SQLException ex) {
+                   Logger.getLogger(CreadorExamen.class.getName()).log(Level.SEVERE, null, ex);
+               }
+           }else {
+                JOptionPane.showMessageDialog(null, "Llena todos los campos vacios", "Agregar Admin", JOptionPane.INFORMATION_MESSAGE);
+            }
+          
+       }   
     }
     
 }
-
