@@ -5,17 +5,22 @@
  */
 package Cliente;
 
+import Base.Conexion;
 import Gui.BotonExamen;
 import Gui.PanelReactivo;
 import Modelo.Examen;
 import Modelo.Reactivo;
 import static Modelo.Reactivo.SIN_RESPONDER;
+import Sesion.Usuario;
 import evaluadorexamenes.FramePrincipal;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +47,7 @@ public class AplicadorExamen extends JPanel implements ActionListener {
 
     FramePrincipal framePrincipal;
     Examen examen;
+    Conexion base;
 
     JPanel panelSuperior, panelContenido, panelControles, panelReactivos;
     JScrollPane scrollPane;
@@ -58,12 +64,12 @@ public class AplicadorExamen extends JPanel implements ActionListener {
         super();
         this.framePrincipal = framePrincipal;
         this.examen = examen;
-        posicionPregunta = 0;
+        this.posicionPregunta = examen.getUltimaPregunta();
         crearGUI();
     }
 
     private void crearGUI() {
-
+        base = new Conexion();
         /**
          * Parte superior de la GUI en donde va el titulo y botones con opciones
          *
@@ -96,6 +102,8 @@ public class AplicadorExamen extends JPanel implements ActionListener {
         for (int i = 0; i < panelPreguntas.size(); i++) {
             panelReactivos.add(panelPreguntas.get(i), String.valueOf(i));
         }
+        CardLayout cl = (CardLayout) (panelReactivos.getLayout());
+        cl.show(panelReactivos, String.valueOf(posicionPregunta));
 
         panelControles = new JPanel();
         panelControles.setLayout(new BoxLayout(panelControles, BoxLayout.X_AXIS));
@@ -115,24 +123,24 @@ public class AplicadorExamen extends JPanel implements ActionListener {
          * Timer timer = new Timer(); timer.schedule(new Temporalizador(1, 5),
          * 0, 1000);*
          */
-        tiempo = new Thread(new Temporalizador(1, 5));
-        tiempo.start();
+        
+        obtenerTiempo();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonSiguiente) {
-            if (panelPreguntas.get(posicionPregunta).obtenerRespuesta() != SIN_RESPONDER) {
+            if (!panelPreguntas.get(posicionPregunta).obtenerRespuesta().equals(SIN_RESPONDER)) {
                 ponerRespuesta();
             } else {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "¿Estas seguro de pasar a la siguiente pregunta? Aun no has seleccionado una respuesta", "Advertencia", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     ponerRespuesta();
-                }else{
+                } else {
                     return;
                 }
             }
-            if(buttonSiguiente.getText().equals("Terminar examen") && posicionPregunta == reactivos.size()){
+            if (buttonSiguiente.getText().equals("Terminar examen") && posicionPregunta == reactivos.size()) {
                 terminarExamen("Examen finalizado");
             }
         }
@@ -149,31 +157,106 @@ public class AplicadorExamen extends JPanel implements ActionListener {
     public void obtenerReactivos() {
         reactivos = new Vector<>();
         panelPreguntas = new ArrayList<>();
-
         Reactivo reactivox;
-        for (int i = 0; i < 10; i++) {
-            reactivox = new Reactivo(i, "Pregunta muy larga" + i, "a", "b", "c", "d", SIN_RESPONDER);
-            reactivos.add(reactivox);
-            panelPreguntas.add(new PanelReactivo(reactivox));
+        try {
+            base.conectar();
+            ResultSet rs = base.ejecutaQuery("select * from mostraexa where idExamen = " + examen.getIdExamen() + ";");//"++"
+            while (rs.next()) {
+                reactivox = new Reactivo(
+                        rs.getInt("idPregunta"),
+                        rs.getString("pregunta"),
+                        rs.getString("opcionA"),
+                        rs.getString("opcionB"),
+                        rs.getString("opcionC"),
+                        rs.getString("opcionD"),
+                        SIN_RESPONDER
+                );
+                reactivos.add(reactivox);
+                panelPreguntas.add(new PanelReactivo(reactivox));
+            }
+            base.cierraConexion();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+
     }
 
     public void ponerRespuesta() {
         reactivos.get(posicionPregunta).setRespuesta(panelPreguntas.get(posicionPregunta).obtenerRespuesta());
-        posicionPregunta++;
+        try {
+            base.conectar();
+            ResultSet rs = base.ejecutaQuery("call Respues(" + Usuario.getId() + "," + reactivos.get(posicionPregunta).getIdReactivo() + ",\"" + reactivos.get(posicionPregunta).getRespuesta() + "\");");//"++"
+            if (rs.next()) {
+                posicionPregunta++;
+                if (rs.getString("msj").equals("ok")) {
+                    System.out.println("guardado a la base");
+                    ResultSet rsprogreso = base.ejecutaQuery("call AgreClien(" + Usuario.getId() + ", " + posicionPregunta + ", " + examen.getIdExamen() + ");");
+                    if (rsprogreso.next()) {
+
+                    }
+                }
+            }
+            base.cierraConexion();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         CardLayout cl = (CardLayout) (panelReactivos.getLayout());
         cl.show(panelReactivos, String.valueOf(posicionPregunta));
         if (posicionPregunta == panelPreguntas.size() - 1) {
             buttonSiguiente.setText("Terminar examen");
         }
     }
-    
-    public void terminarExamen(String mensaje){
-        
+
+    public void terminarExamen(String mensaje) {
+        calificarExamen();
         //llamada a base de datos para guardar respuestas
         JOptionPane.showMessageDialog(null, mensaje, "Examen concluido", JOptionPane.INFORMATION_MESSAGE);
         framePrincipal.mostrarPanel(new Resultados(framePrincipal, examen));
         tiempo.stop();
+    }
+
+    public void calificarExamen() {
+        int calificacion = 0;
+        try {
+            base.conectar();
+            base.ejecuta("SET sql_mode=(SELECT REPLACE(@@sql_mode,\"ONLY_FULL_GROUP_BY\",\"\"));");
+            if (posicionPregunta < 10) {
+                ResultSet rsprogreso = base.ejecutaQuery("call AgreClien(" + Usuario.getId() + ", " + 10 + ", " + examen.getIdExamen() + ");");
+            }
+            ResultSet rs = base.ejecutaQuery("select respuestaCorrecta, respuestaCliente from vwmostrarResultadosCompletos "
+                    + "where idCliente = " + Usuario.getId() + " and idExamen = " + examen.getIdExamen() + ";");//
+            while (rs.next()) {
+                if (rs.getString("respuestaCorrecta").equals(rs.getString("respuestaCliente"))) {
+                    calificacion++;
+                }
+            }
+            ResultSet rsCalificacion = base.ejecutaQuery("call spPonerCalificacionExamen(" + examen.getIdExamen() + ", " + Usuario.getId() + ", " + calificacion + ");");
+            if (rsCalificacion.next()) {
+                if (rsCalificacion.getString("msj").equals("ok")) {
+                    System.out.println("Calificacion guardada");
+                }
+            }
+            base.cierraConexion();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        examen.setCalificación(calificacion);
+    }
+    
+    public void obtenerTiempo(){
+        try {
+            base.conectar();
+            ResultSet rs = base.ejecutaQuery("select tiempo from examen where idExamen = "+examen.getIdExamen()+";");//"++"
+            if (rs.next()) {
+                Time duracion = rs.getTime("tiempo");
+                tiempo = new Thread(new Temporalizador(duracion.getMinutes(), duracion.getSeconds()));
+                tiempo.start();
+            }
+            base.cierraConexion();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
     }
 
     class Temporalizador implements Runnable {
@@ -189,7 +272,7 @@ public class AplicadorExamen extends JPanel implements ActionListener {
             while (true) {
                 try {
                     if (segundos == 0) {
-                        
+
                         if (minutos == 0) {
                             System.out.println("acabo");
                             terminarExamen("Se agoto el tiempo para responder el examen");
@@ -199,7 +282,7 @@ public class AplicadorExamen extends JPanel implements ActionListener {
                         }
                         minutos--;
                     }
-                    
+
                     segundos--;
                     System.out.println(minutos + ":" + segundos);
                     lblTiempo.setText("Tiempo restante: " + minutos + ":" + segundos);

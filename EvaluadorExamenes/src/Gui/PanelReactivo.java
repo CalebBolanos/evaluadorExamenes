@@ -6,11 +6,6 @@
 package Gui;
 
 import Modelo.Reactivo;
-import static Modelo.Reactivo.INCISO_A;
-import static Modelo.Reactivo.INCISO_B;
-import static Modelo.Reactivo.INCISO_C;
-import static Modelo.Reactivo.INCISO_D;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
@@ -40,16 +35,16 @@ public class PanelReactivo extends JPanel implements ActionListener{
         
         lblPregunta = new JLabel(reactivo.getPregunta());
         
-        radioIncisoA = new JRadioButton("a");
+        radioIncisoA = new JRadioButton(reactivo.getOpcionA());
         radioIncisoA.addActionListener(this);
         
-        radioIncisoB = new JRadioButton("b");
+        radioIncisoB = new JRadioButton(reactivo.getOpcionB());
         radioIncisoB.addActionListener(this);
         
-        radioIncisoC = new JRadioButton("c");
+        radioIncisoC = new JRadioButton(reactivo.getOpcionC());
         radioIncisoC.addActionListener(this);
         
-        radioIncisoD = new JRadioButton("d");
+        radioIncisoD = new JRadioButton(reactivo.getOpcionD());
         radioIncisoD.addActionListener(this);
         
         respuestas.add(radioIncisoA);
@@ -65,23 +60,23 @@ public class PanelReactivo extends JPanel implements ActionListener{
         add(radioIncisoD);
     }
     
-    public int obtenerRespuesta(){
+    public String obtenerRespuesta(){
         return reactivo.getRespuesta();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(radioIncisoA.isSelected()){
-            reactivo.setRespuesta(INCISO_A);
+            reactivo.setRespuesta(reactivo.getOpcionA());
         }
         if(radioIncisoB.isSelected()){
-            reactivo.setRespuesta(INCISO_B);
+            reactivo.setRespuesta(reactivo.getOpcionB());
         }
         if(radioIncisoC.isSelected()){
-            reactivo.setRespuesta(INCISO_C);
+            reactivo.setRespuesta(reactivo.getOpcionC());
         }
         if(radioIncisoD.isSelected()){
-            reactivo.setRespuesta(INCISO_D);
+            reactivo.setRespuesta(reactivo.getOpcionD());
         }
     }
     

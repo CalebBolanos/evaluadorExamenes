@@ -10,16 +10,12 @@ package Modelo;
  * @author calebbolanos
  */
 public class Reactivo {
-    public static final int SIN_RESPONDER = 0;
-    public static final int INCISO_A = 1;
-    public static final int INCISO_B = 2;
-    public static final int INCISO_C = 3;
-    public static final int INCISO_D = 4;
+    public static final String SIN_RESPONDER = "";
     
-    private String pregunta, opcionA, opcionB, opcionC, opcionD;
-    private int idReactivo, respuesta;
+    private String pregunta, opcionA, opcionB, opcionC, opcionD, respuesta;
+    private int idReactivo;
 
-    public Reactivo(int idReactivo, String pregunta, String opcionA, String opcionB, String opcionC, String opcionD, int respuesta) {
+    public Reactivo(int idReactivo, String pregunta, String opcionA, String opcionB, String opcionC, String opcionD, String respuesta) {
         this.idReactivo = idReactivo;
         this.pregunta = pregunta;
         this.opcionA = opcionA;
@@ -77,11 +73,11 @@ public class Reactivo {
         this.opcionD = opcionD;
     }
 
-    public int getRespuesta() {
+    public String getRespuesta() {
         return respuesta;
     }
 
-    public void setRespuesta(int respuesta) {
+    public void setRespuesta(String respuesta) {
         this.respuesta = respuesta;
     }
 
